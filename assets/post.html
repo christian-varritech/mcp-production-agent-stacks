@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Production Agent Stacks - Varritech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Chakra Petch', sans-serif;
+      background: #0a0020;
+      overflow: hidden;
+      width: 1200px;
+      height: 1200px;
+    }
+
+    .canvas {
+      position: relative;
+      width: 1200px;
+      height: 1200px;
+      background: #0a0020;
+      overflow: hidden;
+    }
+
+    /* Freeform gradient blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .blob-1 {
+      width: 600px;
+      height: 600px;
+      background: linear-gradient(135deg, #7b2ff7 0%, #2d8cff 100%);
+      top: -200px;
+      right: -200px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, #f72f8a 0%, #ff8a00 100%);
+      bottom: -150px;
+      left: -150px;
+      animation-delay: -5s;
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #00ffa3 0%, #00d4ff 100%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -30px) scale(1.05); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(20px, 30px) scale(1.02); }
+    }
+
+    /* Scanlines overlay */
+    .scanlines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Vignette */
+    .vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 0, 32, 0.6) 100%);
+      pointer-events: none;
+      z-index: 11;
+    }
+
+    /* Bauhaus geometric shapes */
+    .bauhaus {
+      position: absolute;
+      opacity: 0.12;
+      z-index: 5;
+    }
+
+    .bauhaus-circle {
+      width: 200px;
+      height: 200px;
+      border: 3px solid #00ffa3;
+      border-radius: 50%;
+      top: 150px;
+      left: 100px;
+    }
+
+    .bauhaus-rect {
+      width: 150px;
+      height: 150px;
+      background: #ff6b35;
+      bottom: 200px;
+      right: 150px;
+      transform: rotate(15deg);
+    }
+
+    .bauhaus-triangle {
+      width: 0;
+      height: 0;
+      border-left: 80px solid transparent;
+      border-right: 80px solid transparent;
+      border-bottom: 140px solid #7b2ff7;
+      top: 400px;
+      right: 300px;
+      transform: rotate(-10deg);
+    }
+
+    .bauhaus-line {
+      width: 300px;
+      height: 4px;
+      background: linear-gradient(90deg, #f72f8a, #ff8a00);
+      top: 700px;
+      left: 50px;
+      transform: rotate(-20deg);
+    }
+
+    /* Main content */
+    .content {
+      position: relative;
+      z-index: 20;
+      padding: 80px 60px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      background-image: url('varritech-logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: invert(1) brightness(2);
+    }
+
+    .brand-name {
+      color: #fff;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    /* Hook with strikethrough */
+    .hook-container {
+      margin-top: 40px;
+    }
+
+    .hook-strikethrough {
+      color: #6b7280;
+      font-size: 42px;
+      font-weight: 600;
+      text-decoration: line-through;
+      text-decoration-color: #7b2ff7;
+      text-decoration-thickness: 3px;
+    }
+
+    .hook-pivot {
+      color: #00ffa3;
+      font-size: 52px;
+      font-weight: 700;
+      margin-top: 10px;
+      line-height: 1.1;
+    }
+
+    /* Stat pills */
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 50px;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50px;
+      padding: 16px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 180px;
+    }
+
+    .stat-value {
+      color: #00ffa3;
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      color: #9ca3af;
+      font-size: 14px;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    /* Glassmorphism diff card */
+    .diff-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 50px;
+    }
+
+    .diff-title {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    .diff-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .diff-row:last-child {
+      border-bottom: none;
+    }
+
+    .diff-label {
+      color: #9ca3af;
+      font-size: 16px;
+    }
+
+    .diff-values {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .diff-old {
+      color: #ef4444;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .diff-new {
+      color: #00ffa3;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    /* CTA */
+    .cta-container {
+      margin-top: auto;
+      text-align: center;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #00ffa3 0%, #00d4ff 100%);
+      color: #0a0020;
+      font-size: 28px;
+      font-weight: 700;
+      padding: 24px 60px;
+      border-radius: 50px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      box-shadow: 0 10px 40px rgba(0, 255, 163, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .repo-url {
+      color: #7b2ff7;
+      font-size: 20px;
+      margin-top: 20px;
+      font-family: monospace;
+    }
+
+    /* Tagline */
+    .tagline {
+      color: #6b7280;
+      font-size: 18px;
+      text-align: center;
+      margin-top: 30px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <!-- Gradient blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Scanlines and vignette -->
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- Bauhaus shapes -->
+    <div class="bauhaus bauhaus-circle"></div>
+    <div class="bauhaus bauhaus-rect"></div>
+    <div class="bauhaus bauhaus-triangle"></div>
+    <div class="bauhaus bauhaus-line"></div>
+
+    <!-- Main content -->
+    <div class="content">
+      <!-- Logo -->
+      <div class="logo-container">
+        <div class="logo"></div>
+        <div class="brand-name">VARRITECH</div>
+      </div>
+
+      <!-- Hook -->
+      <div class="hook-container">
+        <div class="hook-strikethrough">Stop burning $30K/month on AI APIs</div>
+        <div class="hook-pivot">Build MCP agent stacks at 10x lower cost</div>
+      </div>
+
+      <!-- Stat pills -->
+      <div class="stats">
+        <div class="stat-pill">
+          <div class="stat-value">35.5M</div>
+          <div class="stat-label">weekly npm downloads</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-value">95%</div>
+          <div class="stat-label">cost reduction</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-value">10x</div>
+          <div class="stat-label">faster deployment</div>
+        </div>
+      </div>
+
+      <!-- Diff card -->
+      <div class="diff-card">
+        <div class="diff-title">Monthly Infrastructure Cost</div>
+        <div class="diff-row">
+          <div class="diff-label">Pure API (no optimization)</div>
+          <div class="diff-values">
+            <span class="diff-old">$15-30K</span>
+          </div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-label">API + Routing + Caching</div>
+          <div class="diff-values">
+            <span class="diff-old">$6-12K</span>
+          </div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-label">Hybrid (API + Self-hosted)</div>
+          <div class="diff-values">
+            <span class="diff-new">$800-2K</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-container">
+        <div class="cta-button">FORK THE REPO</div>
+        <div class="repo-url">github.com/christian-varritech/mcp-production-agent-stacks</div>
+        <div class="tagline">Bold ideas wait for no one</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
